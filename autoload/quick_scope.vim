@@ -56,6 +56,18 @@ function! quick_scope#Ready() abort
 
   call s:handle_extra_highlight(2)
 
+  if exists('*sneak#reset')
+    " Ensure that calling sneak#reset in quick_scope#Ready() does not remove
+    " quickscope's mappings.
+    unlockvar g:sneak#opt 
+          \| let g:sneak#f_reset = 0 | let g:sneak#t_reset = 0
+          \| let g:sneak#opt.f_reset = 0 | let g:sneak#opt.t_reset = 0 
+          \| lockvar g:sneak#opt
+    " The motion doesn't actually matter as it does not run. All that's
+    " required is s:st.rst = 1 is set.
+    call feedkeys('f', 'n') | call sneak#reset('f')
+  endif
+
   " Intentionally return an empty string that will be concatenated with the
   " return values from aim(), reload() and double_tap().
   return ''
